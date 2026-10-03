@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Kitchen Order Scheduler</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+
+<div id="loginPage" class="auth-page">
+
+    <div class="auth-box">
+
+        <div class="logo-circle">🍽️</div>
+
+        <h1>Smart Kitchen</h1>
+        <p class="subtitle">Order Scheduler</p>
+
+        <div class="auth-tabs">
+            <button id="loginTab" class="active-tab" onclick="showLogin()">
+                Login
+            </button>
+
+            <button id="signupTab" onclick="showSignup()">
+                Sign Up
+            </button>
+        </div>
+
+        <!-- LOGIN -->
+
+        <div id="loginForm">
+
+            <input
+                type="text"
+                id="loginEmail"
+                placeholder="Email or Username"
+            >
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Password"
+            >
+
+            <button class="main-btn" onclick="login()">
+                Login
+            </button>
+
+            <p class="demo-text">
+                Demo Login: admin / 12345
+            </p>
+
+        </div>
+
+        <!-- SIGNUP -->
+
+        <div id="signupForm" class="hidden">
+
+            <input
+                type="text"
+                id="signupName"
+                placeholder="Full Name"
+            >
+
+            <input
+                type="email"
+                id="signupEmail"
+                placeholder="Email"
+            >
+
+            <input
+                type="password"
+                id="signupPassword"
+                placeholder="Create Password"
+            >
+
+            <button class="main-btn" onclick="signup()">
+                Create Account
+            </button>
+
+        </div>
+
+        <p id="authMessage"></p>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MAIN APP ================= -->
+
+<div id="appPage" class="hidden">
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="brand">
+            <span>🍽️</span>
+            <div>
+                <h2>Smart Kitchen</h2>
+                <small>Order Scheduler</small>
+            </div>
+        </div>
+
+        <div class="header-right">
+
+            <span id="welcomeUser">
+                Welcome!
+            </span>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- WELCOME -->
+
+        <section class="hero">
+
+            <div>
+
+                <p class="small-label">
+                    DAA PROJECT
+                </p>
+
+                <h1>
+                    Smart Kitchen
+                    <span>Order Scheduler</span>
+                </h1>
+
+                <p>
+                    Efficiently schedule restaurant orders using
+                    Priority Queue, Greedy Scheduling and Deadline
+                    Management.
+                </p>
+
+            </div>
+
+            <div class="hero-icon">
+                👨‍🍳
+            </div>
+
+        </section>
+
+
+        <!-- DASHBOARD STATS -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div>
+                    <p>Total Orders</p>
+                    <h2 id="totalOrders">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div>
+                    <p>High Priority</p>
+                    <h2 id="highPriority">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div>
+                    <p>Total Preparation</p>
+                    <h2 id="totalPrep">0 min</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div>
+                    <p>Total Delay</p>
+                    <h2 id="totalDelay">0 min</h2>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOD MENU ================= -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="small-label">RESTAURANT MENU</p>
+                    <h2>🍔 Food Menu</h2>
+                </div>
+
+                <input
+                    type="text"
+                    id="searchFood"
+                    placeholder="🔍 Search food..."
+                    onkeyup="searchFood()"
+                >
+
+            </div>
+
+
+            <div class="categories">
+
+                <button class="category active-category"
+                    onclick="filterCategory('All', this)">
+                    All
+                </button>
+
+                <button class="category"
+                    onclick="filterCategory('Pizza', this)">
+                    🍕 Pizza
+                </button>
+
+                <button class="category"
+                    onclick="filterCategory('Burger', this)">
+                    🍔 Burgers
+                </button>
+
+                <button class="category"
+                    onclick="filterCategory('Biryani', this)">
+                    🍛 Biryani
+                </button>
+
+                <button class="category"
+                    onclick="filterCategory('Indian', this)">
+                    🥘 Indian
+                </button>
+
+                <button class="category"
+                    onclick="filterCategory('Dessert', this)">
+                    🍨 Desserts
+                </button>
+
+            </div>
+
+
+            <div id="foodGrid" class="food-grid"></div>
+
+        </section>
+
+
+        <!-- ================= CART ================= -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="small-label">ORDER MANAGEMENT</p>
+                    <h2>🛒 Selected Orders</h2>
+                </div>
+
+                <span id="cartCount" class="count-badge">
+                    0
+                </span>
+
+            </div>
+
+            <div id="cartContainer">
+                <p class="empty-message">
+                    No orders selected yet.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= CUSTOM ORDER ================= -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="small-label">CUSTOM ORDER</p>
+                    <h2>➕ Add Kitchen Order</h2>
+                </div>
+
+            </div>
+
+
+            <div class="custom-form">
+
+                <input
+                    type="text"
+                    id="customFood"
+                    placeholder="Food / Order name"
+                >
+
+                <input
+                    type="number"
+                    id="customPrep"
+                    placeholder="Preparation time (min)"
+                    min="1"
+                >
+
+                <select id="customPriority">
+
+                    <option value="1">
+                        Low Priority
+                    </option>
+
+                    <option value="2">
+                        Medium Priority
+                    </option>
+
+                    <option value="3">
+                        High Priority
+                    </option>
+
+                </select>
+
+                <input
+                    type="number"
+                    id="customDeadline"
+                    placeholder="Deadline (min)"
+                    min="1"
+                >
+
+                <button class="main-btn" onclick="addCustomOrder()">
+                    Add Order
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= LIVE QUEUE ================= -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="small-label">REAL-TIME VIEW</p>
+                    <h2>👨‍🍳 Live Kitchen Queue</h2>
+                </div>
+
+            </div>
+
+            <div id="liveQueue" class="queue-grid">
+
+                <p class="empty-message">
+                    No active orders.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ALGORITHM VISUALIZATION ================= -->
+
+        <section class="algorithm-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="small-label">
+                        DAA WORKFLOW
+                    </p>
+
+                    <h2>
+                        🔄 Algorithm Visualization
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <div class="flow-container">
+
+                <div class="flow-step">
+
+                    <span>1</span>
+
+                    <h3>
+                        📥 Incoming Orders
+                    </h3>
+
+                    <p>
+                        Orders enter the kitchen system.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-arrow">
+                    →
+                </div>
+
+
+                <div class="flow-step">
+
+                    <span>2</span>
+
+                    <h3>
+                        ⚡ Priority Queue
+                    </h3>
+
+                    <p>
+                        Orders are considered according
+                        to urgency.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-arrow">
+                    →
+                </div>
+
+
+                <div class="flow-step">
+
+                    <span>3</span>
+
+                    <h3>
+                        🧠 Greedy Selection
+                    </h3>
+
+                    <p>
+                        A suitable order is selected
+                        at each step.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-arrow">
+                    →
+                </div>
+
+
+                <div class="flow-step">
+
+                    <span>4</span>
+
+                    <h3>
+                        📅 Deadline Check
+                    </h3>
+
+                    <p>
+                        Completion time is compared
+                        with the deadline.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-arrow">
+                    →
+                </div>
+
+
+                <div class="flow-step">
+
+                    <span>5</span>
+
+                    <h3>
+                        ✅ Final Schedule
+                    </h3>
+
+                    <p>
+                        On-time and delayed orders
+                        are displayed.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SMART SCHEDULER ================= -->
+
+        <section class="scheduler-section">
+
+            <div class="scheduler-header">
+
+                <div>
+
+                    <p class="small-label">
+                        DAA ENGINE
+                    </p>
+
+                    <h2>
+                        🧠 Smart Kitchen Scheduler
+                    </h2>
+
+                    <p>
+                        Generate an order sequence using
+                        priority, preparation time and deadlines.
+                    </p>
+
+                </div>
+
+                <button
+                    class="schedule-btn"
+                    onclick="generateSchedule()"
+                >
+                    ⚡ Generate Smart Schedule
+                </button>
+
+            </div>
+
+
+            <div id="scheduleResult">
+
+                <div class="empty-scheduler">
+                    <span>🧠</span>
+                    <p>
+                        Add orders and generate the smart schedule.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PERFORMANCE COMPARISON ================= -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="small-label">
+                        PERFORMANCE ANALYSIS
+                    </p>
+
+                    <h2>
+                        📊 Scheduling Performance
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div id="performanceResult">
+
+                <div class="performance-empty">
+
+                    <span>📈</span>
+
+                    <p>
+                        Generate the Smart Schedule to compare
+                        normal ordering with smart scheduling.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ALL ORDERS ================= -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="small-label">
+                        ORDER DATABASE
+                    </p>
+
+                    <h2>
+                        📋 All Kitchen Orders
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div id="allOrders"></div>
+
+        </section>
+
+
+        <!-- ================= FEEDBACK ================= -->
+
+        <section class="feedback-section">
+
+            <div>
+
+                <p class="small-label">
+                    USER FEEDBACK
+                </p>
+
+                <h2>
+                    💬 Share Your Feedback
+                </h2>
+
+                <p>
+                    Help us improve the kitchen scheduling system.
+                </p>
+
+            </div>
+
+
+            <div class="feedback-form">
+
+                <input
+                    type="text"
+                    id="feedbackName"
+                    placeholder="Your name"
+                >
+
+                <select id="feedbackRating">
+
+                    <option value="">
+                        Select Rating
+                    </option>
+
+                    <option value="5">
+                        ⭐⭐⭐⭐⭐
+                    </option>
+
+                    <option value="4">
+                        ⭐⭐⭐⭐
+                    </option>
+
+                    <option value="3">
+                        ⭐⭐⭐
+                    </option>
+
+                    <option value="2">
+                        ⭐⭐
+                    </option>
+
+                    <option value="1">
+                        ⭐
+                    </option>
+
+                </select>
+
+                <textarea
+                    id="feedbackText"
+                    placeholder="Write your feedback..."
+                ></textarea>
+
+                <button
+                    class="main-btn"
+                    onclick="submitFeedback()"
+                >
+                    Submit Feedback
+                </button>
+
+            </div>
+
+            <p id="feedbackMessage"></p>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <h3>
+            🍽️ Smart Kitchen Order Scheduler
+        </h3>
+
+        <p>
+            DAA Project • Priority Queue • Greedy Scheduling •
+            Job Scheduling
+        </p>
+
+    </footer>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
